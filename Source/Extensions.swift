@@ -20,6 +20,14 @@ extension UITableView {
         gestureRecognizers?.forEach {
             guard $0 != panGestureRecognizer else { return }
             
+            // Fix for iOS 11 compatibility
+            // Based on https://github.com/SwipeCellKit/SwipeCellKit/issues/48
+            guard let recognizer = NSClassFromString("UISwipeDismissalGestureRecognizer"), !$0.isKind(of: recognizer) else {
+                // Always be false or you can not trigger swipe action's callback
+                $0.isEnabled = false 
+                return
+            }
+            
             $0.isEnabled = enabled
         }
     }
